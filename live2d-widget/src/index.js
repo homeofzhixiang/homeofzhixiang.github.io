@@ -1,7 +1,7 @@
-import Model from "./model.js";
 import showMessage from "./message.js";
-import randomSelection from "./utils.js";
+import Model from "./model.js";
 import tools from "./tools.js";
+import randomSelection from "./utils.js";
 
 function loadWidget(config) {
     const model = new Model(config);
