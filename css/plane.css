@@ -28,8 +28,8 @@
  #drone .container {
      position: relative;
      display: grid;
-     grid-template-rows: repeat(20, 6vh);
-     grid-template-columns: repeat(20, 6vw);
+     grid-template-rows: repeat(20, 5vh);
+     grid-template-columns: repeat(20, 5vw);
      transform-style: preserve-3d;
      z-index: 88;
  }
@@ -6457,7 +6457,7 @@
 
  @-webkit-keyframes opening {
      0% {
-         transform: translateZ(300px) rotateY(360deg) rotateX(-40deg);
+         transform: translateZ(200px) rotateY(360deg) rotateX(-40deg);
      }
 
      100% {
@@ -6467,7 +6467,7 @@
 
  @keyframes opening {
      0% {
-         transform: translateZ(300px) rotateY(360deg) rotateX(-40deg);
+         transform: translateZ(200px) rotateY(360deg) rotateX(-40deg);
      }
 
      100% {
@@ -6483,10 +6483,11 @@
      transition: 500ms;
  }
 
+ /* 飞机位置 */
  #drone .awing {
      position: absolute;
-     top: 50%;
-     left: 50%;
+     top: 60%;
+     left: 48.5%;
      transform-style: preserve-3d;
      transform: scale(1.5) rotateY(180deg) rotateX(90deg);
  }

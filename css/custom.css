@@ -336,31 +336,7 @@
   margin: auto;
 }
 
-/* 一级菜单居中 */
-#nav .menus_items {
-  position: absolute !important;
-  width: fit-content !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
 
-/* 子菜单横向展示 */
-#nav .menus_items .menus_item:hover .menus_item_child {
-  display: flex !important;
-}
-
-/* 这里的2是代表导航栏的第2个元素，即有子菜单的元素，可以按自己需求修改 */
-.menus_items .menus_item:nth-child(2) .menus_item_child {
-  left: 10px;
-}
-
-.menus_items .menus_item:nth-child(3) .menus_item_child {
-  left: -50px;
-}
-
-.menus_items .menus_item:nth-child(4) .menus_item_child {
-  left: -80px;
-}
 
 
 /* 自定义字体 */
@@ -368,7 +344,7 @@
   /* 为载入的字体取名字(随意) */
   font-family: 'zhuzi';
   /* 字体文件地址(相对或者绝对路径都可以) */
-  src: url(/font/筑紫A丸by宁静之雨.woff2);
+  src: url(https://picbed.dreamgo.fun/font/筑紫A丸by宁静之雨.woff2);
   /* 定义加粗样式(加粗多少) */
   font-weight: normal;
   /* 定义字体样式(斜体/非斜体) */
@@ -382,7 +358,7 @@
   /* 为载入的字体取名字(随意) */
   font-family: 'HYTM';
   /* 字体文件地址(相对或者绝对路径都可以) */
-  src: url(/font/HYTangMeiRen55W.woff2);
+  src: url(https://picbed.dreamgo.fun/font/HYTangMeiRen55W.woff2);
   /* 定义加粗样式(加粗多少) */
   font-weight: normal;
   /* 定义字体样式(斜体/非斜体) */
@@ -397,7 +373,7 @@
   /* 为载入的字体取名字(随意) */
   font-family: 'jinglong';
   /* 字体文件地址(相对或者绝对路径都可以) */
-  src: url(/font/云峰静龙行书.woff2);
+  src: url(https://picbed.dreamgo.fun/font/云峰静龙行书.woff2);
   /* 定义加粗样式(加粗多少) */
   font-size: larger;
   font-weight: 900;
@@ -414,7 +390,7 @@
   /* 为载入的字体取名字(随意) */
   font-family: 'xingkai';
   /* 字体文件地址(相对或者绝对路径都可以) */
-  src: url(/font/长城粗行楷体.woff);
+  src: url(https://picbed.dreamgo.fun/font/长城粗行楷体.woff);
   /* 定义加粗样式(加粗多少) */
   font-size: larger;
   font-weight: normal;
@@ -429,7 +405,7 @@
   /* 为载入的字体取名字(随意) */
   font-family: 'hanyi';
   /* 字体文件地址(相对或者绝对路径都可以) */
-  src: url(/font/汉仪行楷.woff2);
+  src: url(https://picbed.dreamgo.fun/font/汉仪行楷.woff2);
   /* 定义加粗样式(加粗多少) */
   font-weight: normal;
   /* 定义字体样式(斜体/非斜体) */
