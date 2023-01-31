@@ -56,6 +56,25 @@
     
     
     <entry>
+      <title>Hello World</title>
+      <link href="/2023/01/23/hello-world/"/>
+      <url>/2023/01/23/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to my blog!</p><p>身为一名CS的学生， 一直期望搭建自己的小站。这个blog完全是照着<a href="https://www.fomal.cc/posts/eec9786.html">Fomalhaut🥝</a>大佬的教程实现的，虽然主要的工作就是拷贝，但完成后还是很开心滴🐹。</p><p>希望通过这个小站， 我能够记录自己学习与生活的点点滴滴。在接下来不多的大学时光和更长远的科研道路上，不负初心，在自己的道路上勇敢前行🤓！</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> record </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>算法提高课笔记——2.1.1 BFS中的Flood Fill和最短路模型</title>
       <link href="/2023/01/23/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0-20230131-2-1-1-BFS%E4%B8%AD%E7%9A%84Flood-Fill%E5%92%8C%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B/"/>
       <url>/2023/01/23/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0-20230131-2-1-1-BFS%E4%B8%AD%E7%9A%84Flood-Fill%E5%92%8C%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B/</url>
@@ -75,25 +94,6 @@
             <tag> 算法 </tag>
             
         </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Hello World</title>
-      <link href="/2023/01/23/hello-world/"/>
-      <url>/2023/01/23/hello-world/</url>
-      
-        <content type="html"><![CDATA[<p>Welcome to my blog!</p><p>身为一名CS的学生， 一直期望搭建自己的小站。这个blog完全是照着<a href="https://www.fomal.cc/posts/eec9786.html">Fomalhaut🥝</a>大佬的教程实现的，虽然主要的工作就是拷贝，但完成后还是很开心滴🐹。</p><p>希望通过这个小站， 我能够记录自己学习与生活的点点滴滴。在接下来不多的大学时光和更长远的科研道路上，不负初心，在自己的道路上勇敢前行🤓！</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> record </category>
-          
-      </categories>
-      
       
     </entry>
     
