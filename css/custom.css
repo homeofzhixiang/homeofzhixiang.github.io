@@ -921,8 +921,14 @@ svg.icon {
 
 #welcome-info {
   background: linear-gradient(45deg, #b9f4f3, #e3fbf9);
-  border-radius: 2px;
+  border-radius: 18px;
   padding: 5px;
+  /* min-width: 290px; */
+  /* width: 95% !important; */
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  
 }
 
 [data-theme="dark"] #welcome-info {
