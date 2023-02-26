@@ -1,0 +1,728 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>2.2.2 DFS之剪枝 | 梦凡のBlog</title><meta name="author" content="沧月倾"><meta name="copyright" content="沧月倾"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="算法提高课 第二章搜索">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.2.2 DFS之剪枝">
+<meta property="og:url" content="https://www.dreamgo.fun/2023/02/26/2-2-2-DFS%E4%B9%8B%E5%89%AA%E6%9E%9D/index.html">
+<meta property="og:site_name" content="梦凡のBlog">
+<meta property="og:description" content="算法提高课 第二章搜索">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://picbed.dreamgo.fun/img/cover/39-1.webp">
+<meta property="article:published_time" content="2023-02-26T08:37:26.000Z">
+<meta property="article:modified_time" content="2023-02-26T14:51:04.736Z">
+<meta property="article:author" content="沧月倾">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://picbed.dreamgo.fun/img/cover/39-1.webp"><link rel="shortcut icon" href="https://picbed.dreamgo.fun/img/favicon/chicken1.webp"><link rel="canonical" href="https://www.dreamgo.fun/2023/02/26/2-2-2-DFS%E4%B9%8B%E5%89%AA%E6%9E%9D/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: {"appId":"WK463HPQ78","apiKey":"9512f543c4086bf61fa2d55f1a92e975","indexName":"blog","hits":{"per_page":10},"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"本文最后更新于","messageNext":"天前，其中的信息可能已经过时"},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":100,"languages":{"author":"作者: 沧月倾","link":"链接: ","source":"来源: 梦凡のBlog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '2.2.2 DFS之剪枝',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-02-26 22:51:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const now = new Date()
+          const hour = now.getHours()
+          const isNight = hour <= 6 || hour >= 18
+          if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/cat.css"><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/pinwheel.css"><link rel="stylesheet" href="/css/plane.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/l-lin/font-awesome-animation/dist/font-awesome-animation.min.css"  media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/readPercent.css"><svg aria-hidden="true" style="position:absolute; overflow:hidden; width:0; height:0"><symbol id="icon-sun" viewBox="0 0 1024 1024"><path d="M960 512l-128 128v192h-192l-128 128-128-128H192v-192l-128-128 128-128V192h192l128-128 128 128h192v192z" fill="#FFD878" p-id="8420"></path><path d="M736 512a224 224 0 1 0-448 0 224 224 0 1 0 448 0z" fill="#FFE4A9" p-id="8421"></path><path d="M512 109.248L626.752 224H800v173.248L914.752 512 800 626.752V800h-173.248L512 914.752 397.248 800H224v-173.248L109.248 512 224 397.248V224h173.248L512 109.248M512 64l-128 128H192v192l-128 128 128 128v192h192l128 128 128-128h192v-192l128-128-128-128V192h-192l-128-128z" fill="#4D5152" p-id="8422"></path><path d="M512 320c105.888 0 192 86.112 192 192s-86.112 192-192 192-192-86.112-192-192 86.112-192 192-192m0-32a224 224 0 1 0 0 448 224 224 0 0 0 0-448z" fill="#4D5152" p-id="8423"></path></symbol><symbol id="icon-moon" viewBox="0 0 1024 1024"><path d="M611.370667 167.082667a445.013333 445.013333 0 0 1-38.4 161.834666 477.824 477.824 0 0 1-244.736 244.394667 445.141333 445.141333 0 0 1-161.109334 38.058667 85.077333 85.077333 0 0 0-65.066666 135.722666A462.08 462.08 0 1 0 747.093333 102.058667a85.077333 85.077333 0 0 0-135.722666 65.024z" fill="#FFB531" p-id="11345"></path><path d="M329.728 274.133333l35.157333-35.157333a21.333333 21.333333 0 1 0-30.165333-30.165333l-35.157333 35.157333-35.114667-35.157333a21.333333 21.333333 0 0 0-30.165333 30.165333l35.114666 35.157333-35.114666 35.157334a21.333333 21.333333 0 1 0 30.165333 30.165333l35.114667-35.157333 35.157333 35.157333a21.333333 21.333333 0 1 0 30.165333-30.165333z" fill="#030835" p-id="11346"></path></symbol></svg><div id="myscoll"></div><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiperstyle.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://picbed.dreamgo.fun/img/avatar/a1.webp" onerror="onerror=null;src='https://picbed.dreamgo.fun/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-HomeLoan"></use></svg><span> 首页</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-dushu1-copy-copy"></use></svg><span> 学习</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/algorithm/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-biji2"></use></svg><span> 算法</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-yanjiu"></use></svg><span> 科研</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/papernote/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-biji1"></use></svg><span> 笔记</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/frontier/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-rengongzhineng"></use></svg><span> 前沿追踪</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-xindong"></use></svg><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/poem/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-shuqian-copy"></use></svg><span> 诗摘</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/music/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-yinlexiangban"></use></svg><span> 音乐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/Gallery/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-tupian"></use></svg><span> 照片</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/movies/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-shexiangji"></use></svg><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/record/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon--pencilcase"></use></svg><span> 记录</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/archives/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-rili"></use></svg><span> 归档</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/tags/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-sekuaibiaoqian"></use></svg><span> 标签</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/categories/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-fenlei3"></use></svg><span> 分类</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/comments/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-liuyan"></use></svg><span> 留言</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/link/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-lianjie1-copy"></use></svg><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picbed.dreamgo.fun/img/cover/39-1.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="梦凡のBlog"><span class="site-name">梦凡のBlog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-HomeLoan"></use></svg><span> 首页</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-dushu1-copy-copy"></use></svg><span> 学习</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/algorithm/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-biji2"></use></svg><span> 算法</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-yanjiu"></use></svg><span> 科研</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/papernote/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-biji1"></use></svg><span> 笔记</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/frontier/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-rengongzhineng"></use></svg><span> 前沿追踪</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="javascript:void(0);"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-xindong"></use></svg><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/poem/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-shuqian-copy"></use></svg><span> 诗摘</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/music/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-yinlexiangban"></use></svg><span> 音乐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/Gallery/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-tupian"></use></svg><span> 照片</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/movies/"><svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-shexiangji"></use></svg><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/record/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon--pencilcase"></use></svg><span> 记录</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/archives/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-rili"></use></svg><span> 归档</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/tags/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-sekuaibiaoqian"></use></svg><span> 标签</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/categories/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-fenlei3"></use></svg><span> 分类</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/comments/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-liuyan"></use></svg><span> 留言</span></a></div><div class="menus_item"><a class="site-page faa-parent animated-hover" href="/link/">         <svg class="icon faa-tada" aria-hidden="true"><use xlink:href="#icon-lianjie1-copy"></use></svg><span> 友链</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="search-button"><a class="site-page social-icon search"><svg class="faa-tada icon" style="height:25px;width:25px;fill:currentColor;position:relative;top:0px" aria-hidden="true"><use xlink:href="#icon-sousuo3"></use></svg></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">2.2.2 DFS之剪枝</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-26T08:37:26.000Z" title="发表于 2023-02-26 16:37:26">2023-02-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-02-26T14:51:04.736Z" title="更新于 2023-02-26 22:51:04">2023-02-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/">算法笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>30分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="2.2.2 DFS之剪枝"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="2-2-2-DFS之剪枝">2.2.2 DFS之剪枝</h1>
+<p>深搜和宽搜都可以对应一颗搜索树，一般在叶子节点存的都是方案，提前判断不合法就是剪枝。</p>
+<h2 id="剪枝优化的常用策略">剪枝优化的常用策略</h2>
+<ol>
+<li class="lvl-3">
+<p>优化搜索顺序大部分情况下，我们应该优先搜索分支较少的结点(子节点比较少)，即选择策略较少的结点。可通过从大到小排序等手段。这样结合剪枝就能搜索更少的点如背包问题，先选大物体，再选小物体。</p>
+</li>
+<li class="lvl-3">
+<p>排除等效冗余不要搜索重复状态。如组合型问题，不考虑顺序。可以规定一个特定顺序。又如分组问题，规定新开一组时，直接将待放的第一个放入，因为组和组之间没有差别。分析时着重思考有没有两种搜索方案会是本质相同的，产生冗余。</p>
+</li>
+<li class="lvl-3">
+<p>可行性剪枝不合法(不满足题目条件)则提前退出</p>
+</li>
+<li class="lvl-3">
+<p>最优性剪枝已经差于当前最优解则退出</p>
+</li>
+<li class="lvl-3">
+<p>记忆化搜索(DP)</p>
+</li>
+</ol>
+<h2 id="1-AcWing-165-小猫爬山">1. <a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/167/">AcWing 165. 小猫爬山</a></h2>
+<h3 id="搜索问题的思考顺序">搜索问题的思考顺序</h3>
+<p>先思考搜索顺序和决策操作，再尝试剪枝</p>
+<p>本题和<a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/1120/">AcWing 1118. 分成互质组</a>很相似，但本题由于对每组的总重量有限制，因而就不能采用贪心策略了——不具有最优子结构。需要额外进行总重量的判断。</p>
+<p>因而本题只能够以枚举每只猫作为搜索顺序。从前往后枚举每只小猫应该放入哪个车上。</p>
+<h3 id="决策操作">决策操作</h3>
+<ol>
+<li class="lvl-3">
+<p>依次尝试放入已开的车</p>
+</li>
+<li class="lvl-3">
+<p>放入一个新开的车注意这里新开一辆车是一种必备的方案，一定会被讨论。而<a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/1120/">AcWing 1118. 分成互质组</a>中由于贪心策略，只有上一组全放满了，才会新开组。</p>
+</li>
+</ol>
+<p>本题和<a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/1120/">AcWing 1118. 分成互质组</a>区别在于，本题使用的是动态数组的思路，为每个数字找组。分成互质组这题使用的是静态数组的思路，为每个组找数字</p>
+<p>注意为了整体代码的一致性，刚开始以开0辆车为起点，依次尝试已开的车时即为0，然后再在dfs中开一辆新车。而不是直接以一辆车为起点。</p>
+<p>分析时可以画搜索树辅助思考。</p>
+<h3 id="分析剪枝策略">分析剪枝策略</h3>
+<ol>
+<li class="lvl-3">
+<p>优化搜索顺序从重量大的猫开始搜索；将所有猫按重量从大到小排序。重量大的占用更多空间，后续需要讨论的分支情况更少。</p>
+</li>
+<li class="lvl-3">
+<p>可行性剪枝如果当前车中的重量加上新猫的重量大于最大载重，就剪枝</p>
+</li>
+<li class="lvl-3">
+<p>最优性剪枝如果车的数量已经大于等于当前最优解就剪枝</p>
+</li>
+</ol>
+<h4 id="C">C++</h4>
+<p>分组问题——动态数组的思路，为每个数字找组</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DFS之剪枝——AcWing 165. 小猫爬山</span></span><br><span class="line"><span class="comment">// 分组问题——动态数组的思路，为每个数字找组</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"><span class="type">int</span> w[N];</span><br><span class="line"><span class="type">int</span> sum[N]; <span class="comment">// 每辆车当前载重量，最多n辆车</span></span><br><span class="line"><span class="type">int</span> ans = N; <span class="comment">// 注意初始赋值，求最小值，所以初始为最糟情况或无穷大</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// u表示猫的下标，k表示将新开的车的下标，也是已开的车的数量</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 最优性剪枝</span></span><br><span class="line">    <span class="comment">// 如果车的数量已经大于等于当前最优解就剪枝</span></span><br><span class="line">    <span class="keyword">if</span> (k &gt;= ans) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 所有猫都放好了就返回</span></span><br><span class="line">    <span class="keyword">if</span> (u == n)&#123;</span><br><span class="line">        ans = k;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; k; i ++ )</span><br><span class="line">        <span class="keyword">if</span> (sum[i] + w[u] &lt;= m)&#123; <span class="comment">// 可行性剪枝</span></span><br><span class="line">        <span class="comment">// 如果当前车中的重量加上新猫的重量大于最大载重，就剪枝(不执行搜索也可以认为是剪枝)</span></span><br><span class="line">            sum[i] += w[u];</span><br><span class="line">            <span class="built_in">dfs</span>(u + <span class="number">1</span>, k);</span><br><span class="line">            sum[i] -= w[u]; </span><br><span class="line">            <span class="comment">// 恢复现场</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 新开一辆车</span></span><br><span class="line">    <span class="comment">// 注意每只猫都会将新开一辆车作为一种情况</span></span><br><span class="line">    <span class="comment">// 而不管前面的车是否放满（不能使用贪心策略）</span></span><br><span class="line">    sum[k] = w[u];</span><br><span class="line">    <span class="built_in">dfs</span>(u + <span class="number">1</span>, k + <span class="number">1</span>);</span><br><span class="line">    sum[k] = <span class="number">0</span>; <span class="comment">// 恢复现场</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++ ) cin &gt;&gt; w[i];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 剪枝优化——优化搜索顺序</span></span><br><span class="line">    <span class="comment">// 从重量大的猫开始搜索；将所有猫按重量排序</span></span><br><span class="line">    <span class="built_in">sort</span>(w, w + n , <span class="built_in">greater</span>&lt;<span class="type">int</span>&gt;());</span><br><span class="line">    <span class="comment">// sort(w, w + n);</span></span><br><span class="line">    <span class="comment">// reverse(w, w + n);</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">dfs</span>(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 注意这里车数从0开始而不是1</span></span><br><span class="line">    <span class="comment">// 注意为了整体代码的一致性，刚开始以开0辆车为起点，依次尝试已开的车时即为0，然后再在dfs中开一辆新车。而不是直接以一辆车为起点。</span></span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; ans &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="python">python</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DFS之剪枝——AcWing 165. 小猫爬山</span></span><br><span class="line"><span class="comment"># 分组问题——动态数组的思路，为每个数字找组</span></span><br><span class="line"><span class="keyword">from</span> sys <span class="keyword">import</span> setrecursionlimit</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    setrecursionlimit(<span class="number">5000</span>)</span><br><span class="line">    n, m = <span class="built_in">map</span>(<span class="built_in">int</span>, <span class="built_in">input</span>().split())</span><br><span class="line">    <span class="comment"># 优化搜索顺序，先安排肥猫，后续的选择更少</span></span><br><span class="line">    w = <span class="built_in">sorted</span>([<span class="built_in">int</span>(<span class="built_in">input</span>()) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n)], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># sorted() 函数对所有可迭代的对象进行排序操作</span></span><br><span class="line">    <span class="comment"># w = w.sort(reverse=True) </span></span><br><span class="line">    s = [<span class="number">0</span>] * n</span><br><span class="line">    res = n</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 回溯法，为每只猫猫找到合适的组</span></span><br><span class="line">    <span class="comment"># idx为当前的猫， s 为预设的空缆车，size 为当前开了几辆缆车</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backtrace</span>(<span class="params">idx, size</span>):</span><br><span class="line">        <span class="keyword">nonlocal</span> res</span><br><span class="line">        <span class="comment"># 剪枝 and 刷新答案</span></span><br><span class="line">        <span class="keyword">if</span> size &gt;= res <span class="keyword">or</span> idx == n:</span><br><span class="line">            res = <span class="built_in">min</span>(res, size)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># 尝试将当前猫猫放入前 size 个缆车中</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(size):</span><br><span class="line">            <span class="comment"># 当前猫可以放到第 i 个缆车中</span></span><br><span class="line">            <span class="keyword">if</span> s[i] + w[idx] &lt;= m:</span><br><span class="line">                s[i] += w[idx]</span><br><span class="line">                backtrace(idx + <span class="number">1</span>, size)</span><br><span class="line">                s[i] -= w[idx]</span><br><span class="line">        <span class="comment"># 新开缆车，放入猫猫</span></span><br><span class="line">        s[size] += w[idx]</span><br><span class="line">        backtrace(idx + <span class="number">1</span>, size + <span class="number">1</span>)</span><br><span class="line">        s[size] -= w[idx]</span><br><span class="line">        </span><br><span class="line">    backtrace(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h2 id="2-AcWing-166-数独">2. <a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/168/">AcWing 166. 数独</a></h2>
+<p>数独问题的要求（限制）：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>每行都要有1~9</p>
+</li>
+<li class="lvl-2">
+<p>每列都要有1~9</p>
+</li>
+<li class="lvl-2">
+<p>每个九宫格都要有1~9</p>
+</li>
+</ul>
+<h3 id="一-搜索顺序">一. 搜索顺序</h3>
+<ol>
+<li class="lvl-3">
+<p>每次随机选取一个空格子进行填写，直到填满。或按照输入的前后顺序开始逐一填写。</p>
+</li>
+<li class="lvl-3">
+<p>每个格子填写时要枚举选哪个数</p>
+</li>
+<li class="lvl-3">
+<p>dfs回溯搜索</p>
+</li>
+</ol>
+<h3 id="决策方式">决策方式</h3>
+<ol>
+<li class="lvl-3">
+<p>尝试填写所有能填的数</p>
+</li>
+</ol>
+<h3 id="剪枝优化">剪枝优化</h3>
+<ol>
+<li class="lvl-3">
+<p>优化搜索顺序选择备选方案最少的格子开始枚举，如果方案数相同则选择排在前面的格子</p>
+</li>
+</ol>
+<p>提前打表求出每个二进制数对应的1的个数，即备选方案数<br>
+2. 排除等效冗余本题可能会存在先填A为n再填B为m和先填B为m再填A为n的等效冗余。但当我们按1中特定顺序枚举时则不存在。<br>
+3. 可行性剪枝不能与行、列、九宫格有重复</p>
+<h3 id="细节部分处理——使用状态压缩-位运算优化">细节部分处理——使用状态压缩+位运算优化</h3>
+<ol>
+<li class="lvl-3">
+<p>如何表示当某一行、列、九宫格前的填写状态由于不能重复的填写相当于组合问题，所以可用01向量表示状态故可采用九位二进制数表示当前行、列、九宫格已使用了哪些数。使用0表示不能再使用(已被用过)，1表示可以使用。之所以这样是为了后面方便使用lowbit()运算</p>
+</li>
+<li class="lvl-3">
+<p>如何判断是否与行、列、九宫格有重复可以对行、列、九宫格使用与运算&amp;&amp;来确定可选择的数字。</p>
+</li>
+</ol>
+<p>需注意，为了满足要求，每行、每列、每个九宫格的数字选取情况都用二进制表示了。但为了确定三个条件都满足的，就用&amp;&amp;取出同时为1的数。<br>
+3. 同时可以使用lowbit()运算依次取出所有1对应的要填的数。</p>
+<h3 id="位运算">位运算</h3>
+<ol>
+<li class="lvl-3">
+<p>求n的二进制表示中第k位是几：<code>n &gt;&gt; k &amp;&amp; 1</code><br>
+先把第k位移到个位(<code>n &gt;&gt; k</code>)，然后取出( <code>n &gt;&gt; k &amp;&amp; 1</code>)</p>
+</li>
+<li class="lvl-3">
+<p>lowbit(x)操作，返回x最右端一位的1所代表的大小<code>x &amp; -x</code><br>
+负数的补码是原码取反加1<code>x &amp; -x == x &amp; (~x + 1)</code>。已知其补码相对于原码，最右端的1和其右面的0是不变的，其余全部取反，因而<code>x &amp; -x</code>后只剩下最右端的1了，其余全变成0。这是树状数组的一个基本操作。用途之一是用来求一个数x二进制表示中1的个数</p>
+</li>
+</ol>
+<p>打表预处理优化-&gt;两个数组</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>求出所有二进制数中有多少1，用于优化搜索顺序——分枝少的格子先填写</p>
+</li>
+<li class="lvl-2">
+<p>lowbit返回时最右端的1所代表的大小，第k位的代表$2^k$，需要快速求出k，因此建立一个对应的映射函数直接查询</p>
+</li>
+</ul>
+<h4 id="C-2">C++</h4>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DFS之剪枝——AcWing 166. 数独</span></span><br><span class="line"><span class="comment">// 剪枝优化+位运算+打表</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">9</span>, M = <span class="number">1</span> &lt;&lt; N;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> ones[M], map[M];</span><br><span class="line"><span class="comment">// ones用于求出每个二进制数有多少个1，用于优化搜索顺序——选取备选方案最少的格子先填写</span></span><br><span class="line"><span class="comment">// map用于存储2^k取对数为多少(即k)，因为lowbit求出的是2^k，而我们想要的是k</span></span><br><span class="line"><span class="type">int</span> row[N], col[N], cell[<span class="number">3</span>][<span class="number">3</span>]; <span class="comment">// 存储行、列、九宫格的状态</span></span><br><span class="line"><span class="type">char</span> str[<span class="number">100</span>]; <span class="comment">// 使用字符串存储整个表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 预处理表示行、列、九宫格状态的数组，都初始化为0~8位全1，即为(1 &lt;&lt; N) - 1</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i ++ )</span><br><span class="line">        row[i] = col[i] = (<span class="number">1</span> &lt;&lt; N) - <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// (1 &lt;&lt; N) - 1括号不可少，一定不要忘了位运算的运算级较低</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i ++ )</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j ++ )</span><br><span class="line">            cell[i][j] = (<span class="number">1</span> &lt;&lt; N) - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更新整个图、每行、每列、每个九宫格的当前填写状况，包括填写和恢复两方面</span></span><br><span class="line"><span class="comment">// 在(x,y)位置填写数字t，is_set表示两种选择——填写或恢复原状（删掉已填写的数）</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">draw</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> t, <span class="type">bool</span> is_set)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 注意变成字母</span></span><br><span class="line">    <span class="keyword">if</span> (is_set) str[x * N + y] = <span class="string">&#x27;1&#x27;</span> + t;</span><br><span class="line">    <span class="comment">// 注意这里必须这样写，因为maps中返回的t表示的位数，而在二进制中第0位表示的是1，第i位表示的是i+1，所以要填写的数字时t + &#x27;1&#x27;</span></span><br><span class="line">    <span class="comment">// 删除</span></span><br><span class="line">    <span class="keyword">else</span> str[x * N + y] = <span class="string">&#x27;.&#x27;</span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// t的二进制位数所对应的值的大小(2^t)</span></span><br><span class="line">    <span class="type">int</span> v = <span class="number">1</span> &lt;&lt; t;</span><br><span class="line">    <span class="comment">// 如果删除操作就减去v，填写操作就加上v</span></span><br><span class="line">    <span class="keyword">if</span> (!is_set) v = -v;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意填写后就不能再用了，为0，所以是减去</span></span><br><span class="line">    row[x] -= v;</span><br><span class="line">    col[y] -= v;</span><br><span class="line">    cell[x / <span class="number">3</span>][y / <span class="number">3</span>] -= v; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用lowbit位运算获取最右端一位的1所代表的大小</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">lowbit</span><span class="params">(<span class="type">int</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x &amp; -x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用与运算求(x, y)位置能填哪些数，获取填写情况对应的二进制数</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> row[x] &amp; col[y] &amp; cell[x / <span class="number">3</span>][y / <span class="number">3</span>];</span><br><span class="line">    <span class="comment">// 使用与运算找到行、列、九宫格来取可选择的数字</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> cnt)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!cnt) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> minv = <span class="number">10</span>; <span class="comment">// 存储分支最小的空格的分支数，初值大于最遭情况</span></span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">    <span class="comment">// 求分支最小的空格</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; ++ i)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; ++ j)</span><br><span class="line">            <span class="keyword">if</span> (str[i * N + j] == <span class="string">&#x27;.&#x27;</span>)&#123;</span><br><span class="line">                <span class="comment">// 获取填写情况对应的二进制数</span></span><br><span class="line">                <span class="type">int</span> state = <span class="built_in">get</span>(i, j); </span><br><span class="line">                <span class="keyword">if</span> (ones[state] &lt; minv)&#123;</span><br><span class="line">                    minv = ones[state];</span><br><span class="line">                    x = i, y = j;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> state = <span class="built_in">get</span>(x, y);</span><br><span class="line">    <span class="comment">// 枚举取出所有1，尝试所有能填的数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = state; i; i -= <span class="built_in">lowbit</span>(i))&#123;</span><br><span class="line">        <span class="type">int</span> t = map[<span class="built_in">lowbit</span>(i)]; <span class="comment">// 转换为对应的填写数字（取对数），注意查找使用的是lowbit(i)</span></span><br><span class="line">        <span class="built_in">draw</span>(x, y, t, <span class="literal">true</span>); <span class="comment">// 更新填写</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">dfs</span>(cnt - <span class="number">1</span>)) <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 本题只有唯一解， 为真直接返回，否则回溯时会删除获得的结果</span></span><br><span class="line">        <span class="built_in">draw</span>(x, y, t, <span class="literal">false</span>); <span class="comment">// 恢复原状</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 打表</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; ++ i) map[<span class="number">1</span> &lt;&lt; i] = i;</span><br><span class="line">    <span class="comment">// 1 &lt;&lt; i为2^i的值</span></span><br><span class="line">    <span class="comment">// map用于存储2^k取对数为多少(即k)，因为lowbit求出的是2^k，而我们想要的是k</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打表法，预处理出每个数的二进制中有多少个1</span></span><br><span class="line">    <span class="comment">// 由于一共9个数，所以用0~8位表示即可，故枚举到(1 &lt;&lt; 9) - 1，即M</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; M; ++ i)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; ++ j)</span><br><span class="line">            <span class="comment">// 位运算</span></span><br><span class="line">            <span class="comment">// 求n的二进制表示中第k位是0还是1，n &gt;&gt; k &amp;&amp; 1</span></span><br><span class="line">            ones[i] += i &gt;&gt; j &amp; <span class="number">1</span>;</span><br><span class="line">    	    </span><br><span class="line">    <span class="keyword">while</span> (cin &gt;&gt; str, str[<span class="number">0</span>] != <span class="string">&#x27;e&#x27;</span>)&#123;</span><br><span class="line">        <span class="comment">// 预处理表示行、列、九宫格状态的数组，初始化为全1</span></span><br><span class="line">        <span class="built_in">init</span>();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// cnt表示还有多少个空位</span></span><br><span class="line">        <span class="type">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 填入输入的状态</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>, k = <span class="number">0</span>; i &lt; N; ++ i)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; ++ j, ++ k)</span><br><span class="line">                <span class="keyword">if</span> (str[k] != <span class="string">&#x27;.&#x27;</span>)&#123;</span><br><span class="line">                    <span class="comment">// 数字的大小</span></span><br><span class="line">                    <span class="comment">// 这里写成-&#x27;1&#x27;而不是-&#x27;0&#x27;是为了便于后面求二进制时使用</span></span><br><span class="line">                    <span class="comment">// 因为二进制时t表示位数，而填写的数字为t + &#x27;1&#x27;，所以这里统一格式</span></span><br><span class="line">                    <span class="type">int</span> t = str[k] - <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">                    <span class="comment">// 填入对应状态</span></span><br><span class="line">                    <span class="built_in">draw</span>(i, j, t, <span class="literal">true</span>);</span><br><span class="line">                    </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> ++ cnt;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">dfs</span>(cnt);</span><br><span class="line">        <span class="comment">// 形参为还剩多少空格待填</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">puts</span>(str);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="python-2">python</h4>
+<p>TLE超时</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DFS之剪枝——AcWing 166. 数独</span></span><br><span class="line"><span class="comment"># 剪枝优化+位运算+打表</span></span><br><span class="line"><span class="comment"># python会超时</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    N = <span class="number">9</span></span><br><span class="line">    M = <span class="number">1</span> &lt;&lt; N</span><br><span class="line">    ones = [<span class="number">0</span>] * M</span><br><span class="line">    maps = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(M):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            ones[i] += i &gt;&gt; j &amp; <span class="number">1</span></span><br><span class="line">     </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        maps[<span class="number">1</span> &lt;&lt; i] = i </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">draw</span>(<span class="params">x, y, t, is_set</span>):</span><br><span class="line">        <span class="keyword">if</span> is_set:</span><br><span class="line">            s[x * N + y] = <span class="built_in">str</span>(t)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            s[x * N + y] = <span class="string">&#x27;.&#x27;</span></span><br><span class="line">        </span><br><span class="line">        v = <span class="number">1</span> &lt;&lt; (t - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_set:</span><br><span class="line">            v = -v</span><br><span class="line">        row[x] -= v</span><br><span class="line">        col[y] -= v</span><br><span class="line">        cell[x // <span class="number">3</span>][y // <span class="number">3</span>] -= v</span><br><span class="line">        <span class="comment"># row[x] ^= v</span></span><br><span class="line">        <span class="comment"># col[y] ^= v</span></span><br><span class="line">        <span class="comment"># cell[x//3][y//3] ^= v</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lowbit</span>(<span class="params">x</span>):</span><br><span class="line">        <span class="keyword">return</span> x &amp; -x</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">x, y</span>):</span><br><span class="line">        <span class="keyword">return</span> row[x] &amp; col[y] &amp; cell[x // <span class="number">3</span>][y // <span class="number">3</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backtrace</span>(<span class="params">cnt</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cnt:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        </span><br><span class="line">        minv = <span class="number">10</span></span><br><span class="line">        x, y = <span class="number">0</span>, <span class="number">0</span> </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">                <span class="keyword">if</span> s[i * N + j] == <span class="string">&#x27;.&#x27;</span>:</span><br><span class="line">                    state = get(i, j)</span><br><span class="line">                    <span class="keyword">if</span> ones[state] &lt; minv:</span><br><span class="line">                        minv = ones[state]</span><br><span class="line">                        x, y = i, j</span><br><span class="line">        state = get(x, y)</span><br><span class="line">        <span class="keyword">while</span> state:</span><br><span class="line">            t = maps[lowbit(state)] + <span class="number">1</span></span><br><span class="line">            <span class="comment"># 这里的加1一定不要少</span></span><br><span class="line">            <span class="comment"># 因为maps中返回的t表示的位数，而在二进制中第0位表示的是1，第i位表示的是i+1，</span></span><br><span class="line">            <span class="comment"># 所以要填写的数字时t + 1</span></span><br><span class="line">            draw(x, y, t, <span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">if</span> backtrace(cnt - <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            draw(x, y, t, <span class="literal">False</span>)</span><br><span class="line">            state -= lowbit(state)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        g = <span class="built_in">input</span>()</span><br><span class="line">        <span class="keyword">if</span> g == <span class="string">&quot;end&quot;</span>:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        s = <span class="built_in">list</span>(g)</span><br><span class="line">        <span class="comment"># python中字符串是一个不可变类型，不能直接改变字符串中某个字符的值，</span></span><br><span class="line">        <span class="comment"># 需要另建一个存字符的列表处理字符</span></span><br><span class="line"></span><br><span class="line">        col = [(<span class="number">1</span> &lt;&lt; N) - <span class="number">1</span>] * N;</span><br><span class="line">        row = [(<span class="number">1</span> &lt;&lt; N) - <span class="number">1</span>] * N</span><br><span class="line">        cell = [[(<span class="number">1</span> &lt;&lt; N ) - <span class="number">1</span>] * <span class="number">3</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>)]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># cnt统计棋盘中空位个数</span></span><br><span class="line">        cnt = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">                <span class="keyword">if</span> s[i * N + j] != <span class="string">&#x27;.&#x27;</span>: </span><br><span class="line">                    t = <span class="built_in">int</span>(s[i * N + j])</span><br><span class="line">                    draw(i, j, t, <span class="literal">True</span>)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cnt += <span class="number">1</span></span><br><span class="line">        backtrace(cnt)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>.join(s))</span><br><span class="line">        <span class="comment"># 将列表中字符重新合并成字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h2 id="3-AcWing-167-木棒">3. <a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/169/">AcWing 167. 木棒</a></h2>
+<h3 id="问题转化：">问题转化：</h3>
+<p>本题相当于将若干个数分成多组，使每组总和相等，求解最多能分成多少组</p>
+<p>这里一个值得注意的点是，将“每组总和最小为多少”转化为”最多能分成多少组“</p>
+<h3 id="搜索顺序：">搜索顺序：</h3>
+<ol>
+<li class="lvl-3">
+<p>枚举木棒长度：从最小长度开始，枚举所有可能构成的木棒长度，第一个可行解即最优解</p>
+</li>
+<li class="lvl-3">
+<p>枚举选择小木棍拼接木棒：对于固定长度，依次枚举每根木棒有哪些小木棍构成（相当于一个组一个组的划分好）。小木棍的遍历寻找为组合型枚举</p>
+<p>组内小木棍和木棒的顺序都可取任意特定顺序</p>
+</li>
+</ol>
+<h3 id="剪枝优化：">剪枝优化：</h3>
+<ol>
+<li class="lvl-3">
+<p>可行性剪枝：</p>
+<ul class="lvl-2">
+<li class="lvl-5">组成的木棒长度要是总长度的约数</li>
+<li class="lvl-5">放入的小木棍长度加上木棒当前长度要小于固定长度</li>
+</ul>
+</li>
+<li class="lvl-3">
+<p>优化搜索顺序：为了更少的备选方案，对小木棍按长度从大到小枚举枚举</p>
+</li>
+<li class="lvl-3">
+<p>排除等效冗余：</p>
+<p>这里的冗余要考虑两个方面，首先是每个木棒内部的小木棍不存在顺序；其次木棍间也不存在顺序。前者使用组合数方式枚举即可，后者相对更复杂，因为其还涉及到方案的可行性问题。一般而言，一个小木棍无法用于当前木棒的构成并不能说明方案不可行，还需要继续枚举其他小木棍。但可以考虑一些特殊的情况，用当前小木棍的失败直接排除剩余的一部分小木棍乃至所有小木棍，减少枚举的小木棍数和木棒数。</p>
+<ul class="lvl-2">
+<li class="lvl-5">
+<p>按照组合数方式枚举：规定特定顺序，每次从上次枚举的下一个开始处理——设置形参start</p>
+</li>
+<li class="lvl-5">
+<p>如果当前小木棍加到当前木棒中不可行，则直接略过后面所有长度相等的小木棍（小木棍间的冗余）</p>
+</li>
+<li class="lvl-5">
+<p>如果当前木棒放第一根小木棍u导致这根木棒凑不成length，则不用继续枚举，整个方案一定失败（前提逻辑是我们放入第一根小木棍后会尝试搜寻所有以其为第一部分的所有可能的方案。虽然到了最后我们把第一根小木棍u替换掉了可能会构成当前木棒，但后面其同样还会导致构不成木棒，继续枚举是木棒间的冗余）</p>
+</li>
+<li class="lvl-5">
+<p>如果当前木棒的最后一根小木棍u放在这里能构成了当前木棒，但搜寻后续方案失败了，则这不是因为这根小木棍导致的，且整个方案一定失败。换掉当前小木棍用于后续木棒也一样无法构成，不要再去尝试构建当前木棒的其他方案。（换句话说，已用于构成木棒的小木棍的在木棒间的使用顺序变化不会影响方案的可行性，不用做无意义的替换尝试，构成了的就不要变动了。同时如果当前小木棍构成了当前木棒，但递归搜索后续方案时失败了，就一定失败了，不要再去重新尝试构建当前木棒的其他方案，该层递归直接返回false）</p>
+</li>
+</ul>
+<p>注意放在中间的小木棍是不一样的，其所在木棒无法构成可能是该小木棍和前面组成该木棒的某个小木棍不合适，可以重新组合，不一定就无法构成。</p>
+</li>
+</ol>
+<h4 id="C-3">C++</h4>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DFS之剪枝——AcWing 167. 木棒</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">70</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="type">int</span> w[N];</span><br><span class="line"><span class="type">int</span> sum, length;</span><br><span class="line"><span class="type">bool</span> st[N];</span><br><span class="line"></span><br><span class="line"><span class="comment">// u表示当前构建木棒序号（从0开始，已完全构成木棒数量=u），s表示当前木棒已构建的长度， start用于组合类枚举记录枚举位置</span></span><br><span class="line"><span class="comment">// 当u=sum/length时，实际已经构建好了所有木棒，直接返回</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> s, <span class="type">int</span> start)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (u * length == sum) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// 如果当前木棒已被构建好，则直接返回对下一根木棒的构建</span></span><br><span class="line">    <span class="comment">// 注意这里start也要置为0</span></span><br><span class="line">    <span class="keyword">if</span> (s == length) <span class="keyword">return</span> <span class="built_in">dfs</span>(u + <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 剪枝优化——排除等效冗余，按照组合数方式枚举</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = start; i &lt; n; i ++ )&#123;</span><br><span class="line">        <span class="comment">// 可行性剪枝——放入的小木棍长度加上木棒当前长度要小于固定长度</span></span><br><span class="line">        <span class="keyword">if</span> (st[i] || s + w[i] &gt; length) <span class="keyword">continue</span>;</span><br><span class="line">        st[i] = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">// 判断当前方案是否合法，进行递归</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">dfs</span>(u, s + w[i], i + <span class="number">1</span>)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        st[i] = <span class="literal">false</span>; <span class="comment">// 回溯</span></span><br><span class="line">        </span><br><span class="line">	    <span class="comment">// 当前小木棍失败后的剪枝优化</span></span><br><span class="line">        <span class="comment">// 剪枝优化——排除等效冗余，第一根小木棍不可行则一定不可行</span></span><br><span class="line">        <span class="keyword">if</span> (!s) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="comment">// 剪枝优化——排除等效冗余，第一根小木棍不可行则一定不可行</span></span><br><span class="line">        <span class="keyword">if</span> (s + w[i] == length) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="comment">// 剪枝优化——排除等效冗余，略过后面长度相等的小木棍</span></span><br><span class="line">        <span class="comment">// 能这样写也是因为先进行了排序</span></span><br><span class="line">        <span class="type">int</span> j = i;</span><br><span class="line">        <span class="keyword">while</span> (j &lt; n &amp;&amp; w[j] == w[i]) j ++ ;</span><br><span class="line">        <span class="comment">// 注意因为for循环也会执行i++，所以这里随后要写i=j-1</span></span><br><span class="line">        i = j - <span class="number">1</span>;  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (cin &gt;&gt; n, n)&#123;</span><br><span class="line">        <span class="comment">// 初始化</span></span><br><span class="line">        <span class="built_in">memset</span>(st, <span class="number">0</span>, <span class="keyword">sizeof</span> st);</span><br><span class="line">        sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++ )&#123;</span><br><span class="line">            cin &gt;&gt; w[i];</span><br><span class="line">            sum += w[i]; <span class="comment">// 总长度</span></span><br><span class="line">        &#125;</span><br><span class="line">	    <span class="comment">// 剪枝——优化搜索顺序，长度从大到小枚举小木棍</span></span><br><span class="line">        <span class="built_in">sort</span>(w, w + n);</span><br><span class="line">        <span class="built_in">reverse</span>(w, w + n);</span><br><span class="line">        <span class="comment">// sort(w, w + n, greater&lt;int&gt;())</span></span><br><span class="line">	    </span><br><span class="line">        <span class="comment">// 枚举木棒长度</span></span><br><span class="line">        length = w[<span class="number">0</span>];</span><br><span class="line">        <span class="comment">// 不会死循环——最遭情况是所有小木棍共同构成一根木棒</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>)&#123;</span><br><span class="line">            <span class="comment">// 可行性剪枝</span></span><br><span class="line">            <span class="keyword">if</span> (sum % length == <span class="number">0</span> &amp;&amp; <span class="built_in">dfs</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))&#123;</span><br><span class="line">                cout &lt;&lt; length &lt;&lt; endl;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            length ++ ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="python-3">python</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DFS之剪枝——AcWing 167. 木棒</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="comment"># cnt 表示当前在组合第几根棍子，从0开始，已完全构成木棒数量=cnt</span></span><br><span class="line">    <span class="comment"># cur 表示当前棍子的长度</span></span><br><span class="line">    <span class="comment"># st  表示当前从第几根小棍子开始枚举</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backtrace</span>(<span class="params">cnt, cur, start</span>):</span><br><span class="line">        <span class="keyword">if</span> cnt * length == tot:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="comment"># 如果当前木棒已被构建好，则直接返回对下一根木棒的构建</span></span><br><span class="line">        <span class="keyword">if</span> cur == length:</span><br><span class="line">            <span class="keyword">return</span> backtrace(cnt + <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        fail = -<span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(start, n):</span><br><span class="line">            <span class="comment"># 可行性剪枝，不能是用过的、组合后长度超过length的</span></span><br><span class="line">            <span class="comment"># 剪枝优化——排除等效冗余，失败后略过后面长度相等的小木棍</span></span><br><span class="line">            <span class="keyword">if</span> vis[i] <span class="keyword">or</span> w[i] == fail <span class="keyword">or</span> cur + w[i] &gt; length:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            vis[i] = <span class="literal">True</span></span><br><span class="line">            <span class="keyword">if</span> backtrace(cnt, cur + w[i], i + <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            vis[i] = <span class="literal">False</span></span><br><span class="line">            <span class="comment"># 到这里说明当前方案失败，记录失败的棍子长度</span></span><br><span class="line">            fail = w[i]</span><br><span class="line">            <span class="comment"># 注意这里和C++写法的不同--&gt;无法通过直接修改i的值跳过循环，所以采用标记法</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 剪枝优化——排除等效冗余</span></span><br><span class="line">            <span class="comment"># 失败了，且当前小棍子是第一根或者最后一根，说明后续也找不到合法方案来安放它</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> cur:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">            <span class="keyword">if</span> cur + w[i] == length:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        n = <span class="built_in">int</span>(<span class="built_in">input</span>(), )</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> n:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># 优化搜索顺序，大的先搜</span></span><br><span class="line">        w = <span class="built_in">sorted</span>(<span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, <span class="built_in">input</span>().split())), reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="comment"># length恰从最长小木棒开始搜</span></span><br><span class="line">        tot, length = <span class="built_in">sum</span>(w), w[<span class="number">0</span>]</span><br><span class="line">        vis = [<span class="literal">False</span>] * n</span><br><span class="line">        <span class="keyword">while</span> length &lt;= tot:</span><br><span class="line">            <span class="comment"># 可行性剪枝</span></span><br><span class="line">            <span class="comment"># 枚举 [m, tot] 之间能被 tot 整除的单根原棍长度</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> tot % length <span class="keyword">and</span> backtrace(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>):</span><br><span class="line">                <span class="built_in">print</span>(length)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            length += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h2 id="4-AcWing-168-生日蛋糕">4. <a target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/170/">AcWing 168. 生日蛋糕</a></h2>
+<h3 id="整体思路">整体思路</h3>
+<p>问题为给定总体积$N\pi$和总层数$M$，且从上到下内层半径$R$和高$H$严格单调递增，求扣除底面的最小表面积</p>
+<p>题目限制条件较复杂，由$1\leq M\leq20$推断可以使用暴搜</p>
+<p>记最底层为 m, 很容易观察得出，表面积的公式为<br>
+$$<br>
+\begin{align}<br>
+S_{总} &amp; = S_{侧面} + S_{上表面} \\<br>
+&amp; = S_{所有层侧面积之和} + S_{第m层上表面积} \\<br>
+&amp; = \sum_{i=1}^{m}2\pi R_iH_i +\pi R_m^2 \\<br>
+\end{align}<br>
+$$<br>
+而体积为<br>
+$$<br>
+V_总 = \sum_{i=1}^{m}\pi R_i^2H_i<br>
+$$</p>
+<p>由题意，$\pi$可以被忽略掉。</p>
+<p>此外可以发现，利用单调递增的性质，每层高度和半径的最小值恰是该层的编号u（从最高层开始且初始编号为1）。</p>
+<p>有了两个公式，还有题目给出的每层最小高度和最小半径，就知道可以用剪枝 + 暴搜来做这个题</p>
+<p><img src="https://mdpic.dreamgo.fun/img/20210127003014554-1677381630809-2.png" alt="20210127003014554"></p>
+<h3 id="搜索顺序">搜索顺序</h3>
+<p>一层一层搜索半径和高</p>
+<h3 id="剪枝优化-2">剪枝优化</h3>
+<p><img src="https://mdpic.dreamgo.fun/img/image-20230226111159177.png" alt="image-20230226111159177"></p>
+<h4 id="1-优化搜索顺序">1. 优化搜索顺序</h4>
+<ol>
+<li class="lvl-3">
+<p>层间：从下到上搜索，先搜体积和表面积大的，减少分支（由于蛋糕从下往上半径、高度依次递减，故体积也随之递减，由于总体积是确定不变的，所以我们从下往上枚举，最底层的蛋糕对应的分支数量最少。）</p>
+</li>
+<li class="lvl-3">
+<p>层内：先枚举半径再枚举高（半径相对于高来说对体积和表面积的影响较大，半径$R$在公式中是平方级别$R^2$，而高是线性级别$H$），且两者都从大到小枚举</p>
+</li>
+</ol>
+<p>为此，在枚举每一层蛋糕时，需要记录当前层数$u$，当前蛋糕体积$v$和表面积$s$</p>
+<h4 id="2-可行性剪枝">2. 可行性剪枝</h4>
+<blockquote>
+<p>结合单调性放缩，利用高度$h$和半径$r$的范围及体积的约束进行剪枝</p>
+</blockquote>
+<p>记总体积为$N$，当前层编号为$u$，高度为 $H_u$，半径为 $R_u$， 体积为 $V_u$，第 $m$ 层到第$u+1$层体积的累计值为 $V$</p>
+<ol>
+<li class="lvl-3">
+<p>对于$R_u$，当前为第$u$层， 第$u$层的体积为 $V_u$。$R_u$的下界应该是当前的层号$u$，R 的上界应该由两部分决定</p>
+<ul class="lvl-2">
+<li class="lvl-5">$u+1$层半径$R_{u+1}$的约束：由于半径随层数单调递增，所以 $R_u \leq R_{u+1}-1$</li>
+<li class="lvl-5">第$u$层体积 $V_u$的约束：由于第$u$层体积一定小于$N-min\sum_{i=1}^{u-1}V_i-V$，即 $V_u = R_u^2H_u \leq N-min\sum_{i=1}^{u-1}V_i-V$，又由于$H_u$同样有下界$u$，所以$R_u \leq \sqrt{\frac{n-min\sum_{i=1}^{u-1}V_i - V}{u}}$</li>
+</ul>
+</li>
+</ol>
+<p>取这两者的最小值, 故有以下等式成立</p>
+<p>$$<br>
+u \leq R_u \leq min \lbrace R_{u+1}-1, \sqrt{\frac{n-min\sum_{i=1}^{u-1}V_i - V}{u}} \rbrace<br>
+$$</p>
+<ol start="2">
+<li class="lvl-3">
+<p>对于第$u$层高度$H_u$的推导同理，$H_u$的下界为层号$u$，$H_u$的上界由也两部分决定</p>
+<ul class="lvl-2">
+<li class="lvl-5">$u+1$层高度$H_{u+1}$的约束：$H_u \leq H_{u+1}-1$</li>
+<li class="lvl-5">第$u$层体积 $V_u$的约束：由于第$u$层体积一定小于$N - min \sum_{i=1}^{u-1} V_i - V$，即 $V_u = R_u^2 H_u \leq N - min \sum_{i=1}^{u-1} V_i - V$，又由于$R_u$此时已被枚举确定，所以$H_u \leq \frac{n - min \sum_{i=1}^{u-1} V_i - V}{R^2_u}$</li>
+</ul>
+</li>
+</ol>
+<p>故同理可得出下列等式<br>
+$$<br>
+u \leq H_u \leq \min \lbrace H_{u+1} - 1, \frac{n-min\sum_{i=1}^{u-1}V_i - V}{R_u^2} \rbrace<br>
+$$</p>
+<ol start="3">
+<li class="lvl-3">
+<p>体积的可行性剪枝：</p>
+<p>记第 1 到第 $u$ 层体积的累计值为$V_{1-u}$，利用不等式$V + V_{1-u} = N$进行剪枝</p>
+<p>首先需预处理前 $u$ 层体积$V_{1-u}$的最小值 $min\sum_{i=1}^{u}V_i$，此时有$R_i=H_i=u(i=1,\cdots,u)$，则<br>
+$$<br>
+V + min\sum_{i=1}^{u}V_i \leq n<br>
+$$</p>
+</li>
+</ol>
+<h4 id="3-最优性剪枝">3. 最优性剪枝</h4>
+<blockquote>
+<p>放缩挖掘不等式关系，研究表面积的最优性剪枝</p>
+</blockquote>
+<p>记第 $m$ 层到第 $u+1$ 层表面积的累计值为 $S$, 第 1 到第 $u$ 层表面积的累计值为$S_{1-u}$</p>
+<p>利用不等式$S + S_{1-u} &lt; ans$则有以下两种剪枝</p>
+<ol>
+<li class="lvl-3">
+<p>预处理出$S_{1-u}$的最小值为 $min\sum_{i=1}^{u-1}S_i$，此时有$R_i=H_i=u(i=1,\cdots,u)$，则<br>
+$$<br>
+S + \min\sum_{i=1}^{u} S_i &lt; ans<br>
+$$</p>
+</li>
+<li class="lvl-3">
+<p>利用放缩法推表面积公式和体积公式的关系，进一步剪枝</p>
+<ul class="lvl-2">
+<li class="lvl-5">第一层到第$u$层的表面积有（不考虑 $\pi$）</li>
+</ul>
+</li>
+</ol>
+<p>$$<br>
+S_{1-u} = 2 \sum_{i=1}^{u} R_i H_i = \frac{2}{ R_{u+1} } \sum_{i=1}^{u} R_{u+1} R_i H_i &gt; \frac{2}{ R_{u+1} } \sum_{i=1}^{u} R_i^2 H_i<br>
+$$</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>第一层到第 u 层的体积有</p>
+</li>
+</ul>
+<p>$$<br>
+n - V = \sum_{i=1}^{u} R_i^2 H_i<br>
+$$</p>
+<p>所以惊奇地发现<br>
+$$<br>
+S_{1-u} &gt;\frac{2(n-V)}{R_{u+1}}<br>
+$$<br>
+因此 $S_总 = S + S_{1-u}&gt;=S_{ans}$，即</p>
+<p>$$<br>
+S + \frac{2(n-V)}{R_{u+1}} \geq S_{ans}, \ \ \  u=0时取等<br>
+$$</p>
+<p>时就可以剪枝掉（最优性剪枝)</p>
+<h4 id="C-4">C++</h4>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DFS之剪枝——AcWing 168. 生日蛋糕</span></span><br><span class="line"><span class="comment">// 数学推导放缩剪枝</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">23</span>, INF = <span class="number">1e9</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"><span class="comment">// R，H存每一层半径和高度</span></span><br><span class="line"><span class="type">int</span> R[N], H[N];</span><br><span class="line"><span class="comment">// 前u层总体积，总侧面积的最小值，相当于前缀和</span></span><br><span class="line"><span class="type">int</span> minv[N], mins[N];</span><br><span class="line"><span class="type">int</span> ans = INF; <span class="comment">// 表面积答案</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// u表示当前这一层编号，v表示从m到u+1层的总体积（不含本层），s表示从m到u+1层的总共的面积（不含本层）</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> v, <span class="type">int</span> s)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 可行性剪枝——体积约束，已构建层的总体积+待构件层的最小总体积&lt;=总体积</span></span><br><span class="line">    <span class="keyword">if</span> (v + minv[u] &gt; n) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 最优性剪枝——最优表面积，已构建层的表面积+待构件层的最小表面积&lt;当前最优表面积</span></span><br><span class="line">    <span class="keyword">if</span> (s + mins[u] &gt;= ans) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 最优性剪枝——放缩不等式，已构建层的表面积+待构件层的最小表面积&lt;当前最优表面积</span></span><br><span class="line">    <span class="keyword">if</span> (s + <span class="number">2</span>*(n-v)/R[u+<span class="number">1</span>] &gt;= ans) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// u = 0时表明已经枚举完毕，判断当前体积是否等于n，若是，更新表面积</span></span><br><span class="line">    <span class="keyword">if</span> (!u)&#123;</span><br><span class="line">        <span class="keyword">if</span> (n == v) ans = s;</span><br><span class="line">        <span class="comment">// 注意当前总体积不等于n是不要更新面积，但也要return</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 剪枝之优化搜索顺序——先从大到小枚举半径，再从大到小枚举高度</span></span><br><span class="line">    <span class="comment">// 可行性剪枝——只在已确定的可行范围内枚举，范围由单调性放缩得到</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> r = <span class="built_in">min</span>(R[u + <span class="number">1</span>] - <span class="number">1</span>, (<span class="type">int</span>)<span class="built_in">sqrt</span>((n - minv[u - <span class="number">1</span>] - v)/u)); r &gt;= u; -- r)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> h = <span class="built_in">min</span>(H[u + <span class="number">1</span>] - <span class="number">1</span>, (<span class="type">int</span>)(n - minv[u - <span class="number">1</span>] - v)/ (r * r)); h &gt;= u; -- h)&#123;</span><br><span class="line">            <span class="type">int</span> t = (u == m) ? r * r : <span class="number">0</span>; <span class="comment">// 若是最底层，则要把顶部面积加上</span></span><br><span class="line">            R[u] = r, H[u] = h;</span><br><span class="line">            <span class="built_in">dfs</span>(u - <span class="number">1</span>, v + r * r * h, s + <span class="number">2</span> * r * h + t);</span><br><span class="line">            <span class="comment">// 这里需注意，回溯时，R[u], H[u]可直接被覆盖，而并没有改变其他的属性，所以无需恢复现场</span></span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 预处理求出前u层总体积，总侧面积的最小值</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; ++ i)&#123;</span><br><span class="line">        <span class="comment">// 最小时，R和H都等于对应层的编号</span></span><br><span class="line">        minv[i] = minv[i - <span class="number">1</span>] + i * i * i;</span><br><span class="line">        mins[i] = mins[i - <span class="number">1</span>] + <span class="number">2</span> * i * i;</span><br><span class="line">        <span class="comment">// 这里是一个小trick，minv[]和mins[]是按蛋糕从上到下计算的每一层的极限体积和侧面积</span></span><br><span class="line">        <span class="comment">// 但是最后搜索是从下到上搜索，这样min[]前缀和存的就是还未使用的体积和表面积了</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 哨兵，由于第m层R和H小于等于第m+1层R和H的值减1，所以这里将m+1层初始化为INF避免影响</span></span><br><span class="line">    R[m + <span class="number">1</span>] = H[m + <span class="number">1</span>] = INF;</span><br><span class="line">    <span class="built_in">dfs</span>(m, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (ans == INF) </span><br><span class="line">        ans = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, ans);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="python-4">python</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DFS之剪枝——AcWing 168. 生日蛋糕</span></span><br><span class="line"><span class="comment"># 数学推导放缩剪枝</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    MAX_M = <span class="number">24</span></span><br><span class="line">    n = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">    m = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">    <span class="comment"># 记录前 u 层的最小体积和侧面积</span></span><br><span class="line">    minv, mins = [<span class="number">0</span>] * MAX_M, [<span class="number">0</span>] * MAX_M</span><br><span class="line">    <span class="comment"># 记录搜索时每一层的半径和高度</span></span><br><span class="line">    R, H = [<span class="number">0</span>] * MAX_M, [<span class="number">0</span>] * MAX_M</span><br><span class="line">    res = inf</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 预处理边界以及剪枝用的数据</span></span><br><span class="line">    R[m + <span class="number">1</span>] = H[m + <span class="number">1</span>] = inf</span><br><span class="line">    <span class="comment"># 注意u从1到m</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m + <span class="number">1</span>):</span><br><span class="line">        minv[i] = minv[i - <span class="number">1</span>] + i ** <span class="number">3</span></span><br><span class="line">        mins[i] = mins[i - <span class="number">1</span>] + <span class="number">2</span> * i ** <span class="number">2</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 爆搜，剪了很多枝的爆搜</span></span><br><span class="line">    <span class="comment"># n 是体积，m 是层数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backtrace</span>(<span class="params">u, v, s</span>):</span><br><span class="line">        <span class="keyword">nonlocal</span> res</span><br><span class="line">        <span class="keyword">if</span> v + minv[u] &gt; n: </span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># 推出的公式剪枝，筛掉一定不是答案的分支</span></span><br><span class="line">        <span class="keyword">if</span> s + <span class="built_in">max</span>(mins[u], <span class="number">2</span> * (n - v) // R[u + <span class="number">1</span>]) &gt;= res:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> u:</span><br><span class="line">            <span class="comment"># 蛋糕做好了且是当前最优解</span></span><br><span class="line">            <span class="keyword">if</span> v == n:</span><br><span class="line">                res = s</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        </span><br><span class="line">        sr = <span class="built_in">min</span>(R[u + <span class="number">1</span>] - <span class="number">1</span>, <span class="built_in">int</span>(((n - minv[u - <span class="number">1</span>] - v) / u)**<span class="number">0.5</span>))</span><br><span class="line">        <span class="comment"># 优化搜索顺序，从最大的半径开始枚举</span></span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(sr, u - <span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="comment"># 当前是最底层时，不要忘了加上顶部的表面积</span></span><br><span class="line">            t = r * r <span class="keyword">if</span> u == m <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">            sh = <span class="built_in">min</span>(H[u + <span class="number">1</span>] - <span class="number">1</span>, <span class="built_in">int</span>((n - minv[u - <span class="number">1</span>] - v) / (r * r)))</span><br><span class="line">            <span class="comment"># 优化搜索顺序，从最大的高度开始枚举</span></span><br><span class="line">            <span class="keyword">for</span> h <span class="keyword">in</span> <span class="built_in">range</span>(sh, u - <span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">                R[u], H[u] = r, h</span><br><span class="line">                <span class="comment"># 递归上一层</span></span><br><span class="line">                backtrace(u - <span class="number">1</span>, v + r * r * h, s + <span class="number">2</span> * r * h + t)</span><br><span class="line">    <span class="comment"># 从最底层开始向上枚举</span></span><br><span class="line">    backtrace(m, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 无解输出 0</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">if</span> res == inf <span class="keyword">else</span> res)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>2.2.2 DFS之剪枝</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.dreamgo.fun/2023/02/26/2-2-2-DFS%E4%B9%8B%E5%89%AA%E6%9E%9D/">https://www.dreamgo.fun/2023/02/26/2-2-2-DFS之剪枝/</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a"><h>作者</h><div class="post-copyright-cc-info"><h>沧月倾</h></div></div><div class="post-copyright-c"><h>发布于</h><div class="post-copyright-cc-info"><h>2023-02-26</h></div></div><div class="post-copyright-u"><h>更新于</h><div class="post-copyright-cc-info"><h>2023-02-26</h></div></div><div class="post-copyright-c"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY-NC-SA 4.0" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a></div><div class="post_share"><div class="social-share" data-image="https://picbed.dreamgo.fun/img/cover/39-1.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2023/02/23/2-2-1-DFS%E4%B8%AD%E7%9A%84%E8%BF%9E%E9%80%9A%E6%80%A7%E5%92%8C%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F/" title="2.2.1 DFS中的连通性和搜索顺序"><img class="cover" src="https://picbed.dreamgo.fun/img/cover/41.webp" onerror="onerror=null;src='https://picbed.dreamgo.fun/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2.2.1 DFS中的连通性和搜索顺序</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/01/24/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0-20230131-2-1-1-BFS%E4%B8%AD%E7%9A%84Flood-Fill%E5%92%8C%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B/" title="2.1.1 BFS中的Flood Fill和最短路模型"><img class="cover" src="https://picbed.dreamgo.fun/img/cover/36.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-24</div><div class="title">2.1.1 BFS中的Flood Fill和最短路模型</div></div></a></div><div><a href="/2023/02/23/2-2-1-DFS%E4%B8%AD%E7%9A%84%E8%BF%9E%E9%80%9A%E6%80%A7%E5%92%8C%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F/" title="2.2.1 DFS中的连通性和搜索顺序"><img class="cover" src="https://picbed.dreamgo.fun/img/cover/41.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-23</div><div class="title">2.2.1 DFS中的连通性和搜索顺序</div></div></a></div><div><a href="/2023/01/31/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0-20230131-2-1-2-BFS%E4%B8%AD%E7%9A%84%E5%A4%9A%E6%BA%90BFS-%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97BFS-%E6%9C%80%E5%B0%8F%E6%AD%A5%E6%95%B0%E6%A8%A1%E5%9E%8B/" title="2.1.2 BFS中的多源BFS-双端队列BFS-最小步数模型"><img class="cover" src="https://picbed.dreamgo.fun/img/cover/42-1.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-31</div><div class="title">2.1.2 BFS中的多源BFS-双端队列BFS-最小步数模型</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="author_top is-center"><div class="card-info-avatar"></div><div class="avatar-img"><img src="https://picbed.dreamgo.fun/img/avatar/a1.webp" onerror="this.onerror=null;this.src='https://picbed.dreamgo.fun/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">沧月倾</div><div class="author-info__description">枯萎的花儿，能否再次绽放</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/homeofzhixiang"><i class="fab fa-github"></i><span>🛴前往小家...</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><a class="faa-parent animated-hover"><svg class="faa-tada icon" style="height:25px;width:25px;fill:currentColor;position:relative;top:0px" aria-hidden="true"><use xlink:href="#icon-gonggao"></use></svg></a><span>公告栏</span></div><div class="announcement_content"><center>Welcome to ZX's blog!🍭🍭🍭</center></div><div id="welcome-info"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#2-2-2-DFS%E4%B9%8B%E5%89%AA%E6%9E%9D"><span class="toc-text">2.2.2 DFS之剪枝</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96%E7%9A%84%E5%B8%B8%E7%94%A8%E7%AD%96%E7%95%A5"><span class="toc-text">剪枝优化的常用策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-AcWing-165-%E5%B0%8F%E7%8C%AB%E7%88%AC%E5%B1%B1"><span class="toc-text">1. AcWing 165. 小猫爬山</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%97%AE%E9%A2%98%E7%9A%84%E6%80%9D%E8%80%83%E9%A1%BA%E5%BA%8F"><span class="toc-text">搜索问题的思考顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%93%8D%E4%BD%9C"><span class="toc-text">决策操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%89%AA%E6%9E%9D%E7%AD%96%E7%95%A5"><span class="toc-text">分析剪枝策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C"><span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python"><span class="toc-text">python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-AcWing-166-%E6%95%B0%E7%8B%AC"><span class="toc-text">2. AcWing 166. 数独</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-text">一. 搜索顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%96%B9%E5%BC%8F"><span class="toc-text">决策方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96"><span class="toc-text">剪枝优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%86%E8%8A%82%E9%83%A8%E5%88%86%E5%A4%84%E7%90%86%E2%80%94%E2%80%94%E4%BD%BF%E7%94%A8%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9-%E4%BD%8D%E8%BF%90%E7%AE%97%E4%BC%98%E5%8C%96"><span class="toc-text">细节部分处理——使用状态压缩+位运算优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="toc-text">位运算</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-2"><span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python-2"><span class="toc-text">python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-AcWing-167-%E6%9C%A8%E6%A3%92"><span class="toc-text">3. AcWing 167. 木棒</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%BD%AC%E5%8C%96%EF%BC%9A"><span class="toc-text">问题转化：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F%EF%BC%9A"><span class="toc-text">搜索顺序：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96%EF%BC%9A"><span class="toc-text">剪枝优化：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#C-3"><span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python-3"><span class="toc-text">python</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-AcWing-168-%E7%94%9F%E6%97%A5%E8%9B%8B%E7%B3%95"><span class="toc-text">4. AcWing 168. 生日蛋糕</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-text">搜索顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96-2"><span class="toc-text">剪枝优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-text">1. 优化搜索顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%8F%AF%E8%A1%8C%E6%80%A7%E5%89%AA%E6%9E%9D"><span class="toc-text">2. 可行性剪枝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9C%80%E4%BC%98%E6%80%A7%E5%89%AA%E6%9E%9D"><span class="toc-text">3. 最优性剪枝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-4"><span class="toc-text">C++</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python-4"><span class="toc-text">python</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="ft"><div class="ft-item-1"><div class="t-top"><div class="t-t-l"><p class="ft-t t-l-t">格言🧬</p><div class="bg-ad"><div><center> 垂头的时候一切都饱满了 <br/>
+谁记得从前疯狂的燃烧  <br/>
+每一个花瓣都是火焰✨<center/></div><div class="btn-xz-box"><a class="btn-xz" target="_blank" rel="noopener" href="https://stellarium.org/">点击开启星辰之旅</a></div></div></div><div class="t-t-r"><p class="ft-t t-l-t">猜你想看💡</p><ul class="ft-links"><li><a href="/posts/eec9786.html">魔改指南</a><a href="/box/nav/">网址导航</a></li><li><a href="/social/link/">我的朋友</a><a href="/comments/">留点什么</a></li><li><a href="/personal/about/">关于作者</a><a href="/archives/">文章归档</a></li><li><a href="/categories/">文章分类</a><a href="/tags/">文章标签</a></li><li><a href="/box/Gallery/">我的画廊</a><a href="/personal/bb/">我的唠叨</a></li><li><a href="/site/time/">建设进程</a><a href="/site/census/">网站统计</a></li></ul></div></div></div><div class="ft-item-2"><p class="ft-t">推荐友链⌛</p><div class="ft-img-group"><div class="img-group-item"><a target="_blank" rel="noopener" href="https://www.fomal.cc/" title="Fomalhaut🥝"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/60e5d4e39da7c077.webp" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://tzy1997.com/" title="唐志远の博客"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/4ab83cdce942463b.jpg" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://akilar.top/" title="Akilarの糖果屋"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/6bf1ed05796db59c.jpg" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://butterfly.js.org/" title="Butterfly"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/64cc6a7d508026e1.png" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://anzhiy.cn/" title="安知鱼"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/1b33fef8f5fb7e63.jpg" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://www.acozycotage.net/" title="Acozycotage"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/6a6fe6ebfd19c465.jpg" alt=""/></a></div><div class="img-group-item"><a target="_blank" rel="noopener" href="https://cdn.netdun.net/" title="网盾星球"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/70dee3f9d1ca10f3.webp" alt=""/></a></div><div class="img-group-item"><a href="javascript:void(0)" title="广告位招租"><img src="https://lskypro.acozycotage.net/LightPicture/2022/12/65307a5828af6790.webp" alt=""/></a></div></div></div></div><div class="copyright"><span><b>&copy;2023</b></span><span><b>&nbsp;&nbsp;By 沧月倾</b></span></div><div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" title="博客框架为Hexo_v6.3.0"><img src="https://sourcebucket.s3.ladydaily.com/badge/Frame-Hexo-blue.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" title="主题版本Butterfly_v4.3.1"><img src="https://sourcebucket.s3.ladydaily.com/badge/Theme-Butterfly-6513df.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://vercel.com/" style="margin-inline:5px" title="本站采用多线部署，主线路托管于Vercel"><img src="https://sourcebucket.s3.ladydaily.com/badge/Hosted-Vercel-brightgreen.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://user.51.la/" style="margin-inline:5px" title="本站数据分析得益于51la技术支持"><img src="https://sourcebucket.s3.ladydaily.com/badge/Analytics-51la-3db1eb.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://icp.gov.moe/?keyword=20226665" style="margin-inline:5px" title="本站已加入萌ICP豪华套餐，萌ICP备20226665号"><img src="https://sourcebucket.s3.ladydaily.com/badge/萌ICP备-20226665-fe1384.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://bitiful.dogecast.com/buckets" style="margin-inline:5px" title="本网站经Service Worker分流至缤纷云对象存储"><img src=" https://sourcebucket.s3.ladydaily.com/badge/Bucket-缤纷云-9c62da.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://www.netdun.net/" style="margin-inline:5px" title="本站使用网盾星球提供CDN加速与防护"><img src="https://sourcebucket.s3.ladydaily.com/badge/CDN-网盾星球-fff2cc.svg" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" title="本网站源码由Github提供存储仓库"><img src=" https://sourcebucket.s3.ladydaily.com/badge/Source-Github-d021d6.svg" alt=""/></a></p></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i><a class="icon-V hidden" onclick="switchNightMode()" title="浅色和深色模式转换"><svg width="25" height="25" viewBox="0 0 1024 1024"><use id="modeicon" xlink:href="#icon-NightSunnyn"></use></svg></a></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i><span id="percent">0<span>%</span></span></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-info"><div class="algolia-stats"></div><div class="algolia-poweredBy"></div></div></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container').forEach(node => {
+            if (node.hasAttribute('display')) {
+              btf.wrap(node, 'div', { class: 'mathjax-overflow' })
+            } else {
+              btf.wrap(node, 'span', { class: 'mathjax-overflow' })
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'http://twikoo.dreamgo.fun/',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'http://twikoo.dreamgo.fun/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><canvas id="universe"></canvas><script defer src="/js/runtime.js"></script><script defer src="/js/universe.js"></script><script defer src="/js/windows.js"></script><script src="/js/sun_moon.js" async></script><script defer src="/js/cursor.js"></script><script defer src="/js/nav.js"></script><script defer data-pjax src="/js/cat.js"></script><script src="https://cdn.jsdelivr.net/gh/xiabo2/CDN@latest/fishes.js"></script><script async src="//at.alicdn.com/t/c/font_3869443_whvn5c22z3.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script async src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script async src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><script defer data-pjax src="/js/readPercent.js"></script><script src="https://cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script async data-pjax src="/js/txmap.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="/"></script><script>//- let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '#web_bg',
+  '.js-pjax'
+]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"]):not([href="/music/"]):not([href="/no-pjax/"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --> <script data-pjax>if(document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    var parent = document.getElementById('recent-posts');
+    var child = '<div class="recent-post-item" style="width:100%;height: auto"><div id="catalog_magnet"><div class="magnet_item"><a class="magnet_link" href="https://www.dreamgo.fun/categories/算法笔记/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">📚 蒟蒻の算法笔记 (4)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="https://www.dreamgo.fun/categories/record/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">🐱‍👓 随笔 (1)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="https://www.dreamgo.fun/categories/机器学习/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">👩‍💻 机器学习 (1)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><a class="magnet_link_more"  href="https://www.dreamgo.fun/categories" style="flex:1;text-align: center;margin-bottom: 10px;">查看更多...</a></div></div>';
+    console.log('已挂载magnet')
+    parent.insertAdjacentHTML("afterbegin",child)}
+     </script><style>#catalog_magnet{flex-wrap: wrap;display: flex;width:100%;justify-content:space-between;padding: 10px 10px 0 10px;align-content: flex-start;}.magnet_item{flex-basis: calc(33.333333333333336% - 5px);background: #f2f2f2;margin-bottom: 10px;border-radius: 8px;transition: all 0.2s ease-in-out;}.magnet_item:hover{background: #69e8f2}.magnet_link_more{color:#555}.magnet_link{color:black}.magnet_link:hover{color:white}@media screen and (max-width: 600px) {.magnet_item {flex-basis: 100%;}}.magnet_link_context{display:flex;padding: 10px;font-size:16px;transition: all 0.2s ease-in-out;}.magnet_link_context:hover{padding: 10px 20px;}</style>
+    <style></style><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'f1b52487749c4e358d7f84ab68914874';
+  var gaud_map_key = '25e28ec1fcf06a0cf396a3c2fb76103a';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.34532,23.15624';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_swiper_injector_config(){
+    var parent_div_git = document.getElementById('recent-posts');
+    var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/01/23/hello-world/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://picbed.dreamgo.fun/img/cover/23-1.webp" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-01-23</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/01/23/hello-world/&quot;);" href="javascript:void(0);" alt="">Hello World</a><div class="blog-slider__text">Welcome to my blog!</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/01/23/hello-world/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/01/24/算法笔记-20230131-2-1-1-BFS中的Flood-Fill和最短路模型/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://picbed.dreamgo.fun/img/cover/36.webp" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-01-24</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/01/24/算法笔记-20230131-2-1-1-BFS中的Flood-Fill和最短路模型/&quot;);" href="javascript:void(0);" alt="">2.1.1 BFS中的Flood Fill和最短路模型</a><div class="blog-slider__text">算法提高课 第二章搜索</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/01/24/算法笔记-20230131-2-1-1-BFS中的Flood-Fill和最短路模型/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/01/31/算法笔记-20230131-2-1-2-BFS中的多源BFS-双端队列BFS-最小步数模型/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://picbed.dreamgo.fun/img/cover/42-1.webp" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-01-31</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/01/31/算法笔记-20230131-2-1-2-BFS中的多源BFS-双端队列BFS-最小步数模型/&quot;);" href="javascript:void(0);" alt="">2.1.2 BFS中的多源BFS-双端队列BFS-最小步数模型</a><div class="blog-slider__text">算法提高课 第二章搜索</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/01/31/算法笔记-20230131-2-1-2-BFS中的多源BFS-双端队列BFS-最小步数模型/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/02/23/2-2-1-DFS中的连通性和搜索顺序/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://picbed.dreamgo.fun/img/cover/41.webp" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-02-23</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/02/23/2-2-1-DFS中的连通性和搜索顺序/&quot;);" href="javascript:void(0);" alt="">2.2.1 DFS中的连通性和搜索顺序</a><div class="blog-slider__text">算法提高课 第二章搜索</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/02/23/2-2-1-DFS中的连通性和搜索顺序/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;2023/02/26/2-2-2-DFS之剪枝/&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://picbed.dreamgo.fun/img/cover/39-1.webp" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2023-02-26</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;2023/02/26/2-2-2-DFS之剪枝/&quot;);" href="javascript:void(0);" alt="">2.2.2 DFS之剪枝</a><div class="blog-slider__text">算法提高课 第二章搜索</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;2023/02/26/2-2-2-DFS之剪枝/&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载butterfly_swiper')
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  var elist = 'undefined'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_swiper_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_swiper_injector_config();
+  }
+  </script><script defer src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.js"></script><script defer data-pjax src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper_init.js"></script><script async src="//at.alicdn.com/t/font_2032782_8d5kxvn09md.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '2s');
+    arr[i].setAttribute('data-wow-delay', '1s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --></body></html>
