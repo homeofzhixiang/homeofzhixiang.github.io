@@ -925,11 +925,11 @@ svg.icon {
   padding: 5px;
   /* min-width: 290px; */
   /* width: 95% !important; */
-  height: 100% !important;
+  /* height: 100% !important;
   position: absolute;
   left: 10px;
-  right: 10px;
-  font-size: 10px;
+  right: 10px; */
+  font-size: 11px;
   
 }
 
