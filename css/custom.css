@@ -506,7 +506,7 @@ div#archive {
 
 /* 侧边卡片栏宽度 */
 .aside-content {
-  max-width: 330px;
+  max-width: 325px;
   min-width: 300px;
 }
 
@@ -921,8 +921,8 @@ svg.icon {
 
 #welcome-info {
   background: linear-gradient(45deg, #b9f4f3, #e3fbf9);
-  border-radius: 18px;
-  padding: 3px;
+  border-radius: 2px;
+  padding: 5px;
 }
 
 [data-theme="dark"] #welcome-info {
